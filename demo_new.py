@@ -44,16 +44,9 @@ def colorize(shape, flow):
     rgb = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
     return rgb
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description='Demo for python wrapper of Coarse2Fine Optical Flow')
-    parser.add_argument(
-        '-viz', dest='viz', action='store_true',
-        help='Visualize (i.e. save) output of flow.')
-    args = parser.parse_args()
-
-    im1 = np.array(Image.open('examples/car1.jpg'))
-    im2 = np.array(Image.open('examples/car2.jpg'))
+def run(name1, name2):
+    im1 = np.array(Image.open(name1))
+    im2 = np.array(Image.open(name2))
 
     oflow_estimator = OFlowEstimator()
 
@@ -69,3 +62,16 @@ if __name__ == "__main__":
         rgb = colorize(im1.shape, flow)
         cv2.imwrite('examples/outFlow_new.png', rgb)
         cv2.imwrite('examples/car2Warped_new.jpg', im2W[:, :, ::-1] * 255)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description='Demo for python wrapper of Coarse2Fine Optical Flow')
+    parser.add_argument(
+        '-viz', dest='viz', action='store_true',
+        help='Visualize (i.e. save) output of flow.')
+    args = parser.parse_args()
+
+    name1 = 'examples/car1.jpg'
+    name2 = 'examples/car2.jpg'
+
+    run(name1, name2)
