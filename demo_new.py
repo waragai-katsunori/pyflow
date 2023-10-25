@@ -4,11 +4,15 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 # from __future__ import unicode_literals
-import numpy as np
-from PIL import Image
+
 import time
 import argparse
+
+import numpy as np
+from PIL import Image
+import cv2
 import pyflow
+
 
 class OFlowEstimator:
 
@@ -62,8 +66,6 @@ if __name__ == "__main__":
     np.save('examples/outFlow.npy', flow)
 
     if args.viz:
-        import cv2
-
         rgb = colorize(im1.shape, flow)
         cv2.imwrite('examples/outFlow_new.png', rgb)
         cv2.imwrite('examples/car2Warped_new.jpg', im2W[:, :, ::-1] * 255)
