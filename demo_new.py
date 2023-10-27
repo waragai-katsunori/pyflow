@@ -7,6 +7,7 @@ from __future__ import print_function
 
 import time
 import argparse
+from pathlib import Path
 
 import numpy as np
 from PIL import Image
@@ -71,7 +72,37 @@ if __name__ == "__main__":
         help='Visualize (i.e. save) output of flow.')
     args = parser.parse_args()
 
-    name1 = 'examples/car1.jpg'
-    name2 = 'examples/car2.jpg'
+    if 0:
+        name1 = 'examples/car1.jpg'
+        name2 = 'examples/car2.jpg'
 
-    run(name1, name2)
+        run(name1, name2)
+
+    movie_file = Path("kinyoubi.mp4")
+
+    prev_frame, current_frame = None, None
+    cap = cv2.VideoCapture(str(movie_file))
+
+    _, current_frame = cap.read()
+
+    oflow_estimator = OFlowEstimator()
+
+    cv2.namedWindow("concat", cv2.WINDOW_NORMAL)
+    while True:
+        result, new_frame = cap.read()
+        if not result:
+            break
+
+        prev_frame, current_frame = current_frame, new_frame
+        print(current_frame.shape)
+
+        s = time.time()
+        u, v, im2W = oflow_estimator.run(prev_frame, current_frame)
+        e = time.time()
+        print('Time Taken: %.2f seconds for image of size (%d, %d, %d)' % (
+            e - s, prev_frame.shape[0], prev_frame.shape[1], prev_frame.shape[2]))
+        flow = np.concatenate((u[..., None], v[..., None]), axis=2)
+        rgb = colorize(prev_frame.shape, flow)
+        concat = np.hstack((current_frame, rgb))
+        cv2.imshow("concat", concat)
+        cv2.waitKey(1)
